@@ -5,12 +5,12 @@ const rideSchema = new mongoose.Schema({
   user: {
     fullName: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       lowercase: true,
     },
@@ -44,16 +44,16 @@ const rideSchema = new mongoose.Schema({
   driver: {
     id: {
       type: Number,
-      required: true,
+      required: false,
     },
     name: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     carDetails: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   payment: {
