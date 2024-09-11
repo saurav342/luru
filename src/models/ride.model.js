@@ -59,7 +59,7 @@ const rideSchema = new mongoose.Schema({
   payment: {
     amount: {
       type: Number,
-      required: true,
+      required: false,
       min: 0,
     },
     status: {
@@ -70,7 +70,7 @@ const rideSchema = new mongoose.Schema({
     },
     transactionId: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
   },
