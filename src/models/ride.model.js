@@ -71,7 +71,7 @@ const rideSchema = new mongoose.Schema({
     transactionId: {
       type: String,
       required: false,
-      unique: true,
+      unique: false,
     },
   },
 });
