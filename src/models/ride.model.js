@@ -40,6 +40,12 @@ const rideSchema = new mongoose.Schema({
       required: true,
       min: 1,
     },
+    status: {
+        type: String,
+        required: true,
+        enum: ['pending', 'completed', 'live'],
+        default: 'pending',
+      },
   },
   driver: {
     id: {
