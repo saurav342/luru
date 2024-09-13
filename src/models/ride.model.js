@@ -16,6 +16,11 @@ const rideSchema = new mongoose.Schema({
     },
   },
   ride: {
+    registrationNumber: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     pickupAddress: {
       type: String,
       required: true,

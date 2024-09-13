@@ -20,7 +20,10 @@ const updateRideById = async (rideId, updateBody) => {
   if (!ride) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Ride not found');
   }
-  Object.assign(ride, updateBody);
+  console.log('...................1.........', ride);
+  console.log('....................2........', updateBody);
+  Object.assign(ride, {ride : {...ride.ride, ...updateBody}});
+  console.log('....................3........', ride);
   await ride.save();
   return ride;
 };
