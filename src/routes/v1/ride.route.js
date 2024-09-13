@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.route('/')
 .post(rideController.createRide)
+.put(rideController.updateRide)
 .get(rideController.getRides);
 
 module.exports = router;

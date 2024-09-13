@@ -13,8 +13,7 @@ const createRide = catchAsync(async (req, res) => {
     res.status(httpStatus.CREATED).send(ride);
   } catch (error) {
     console.log('..................', error);
-    res.status(httpStatus.BAD_REQUEST
-    ).send({ message: error.message });
+    res.status(httpStatus.BAD_REQUEST).send({ message: error.message });
   }
 
 });
