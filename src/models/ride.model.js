@@ -15,12 +15,8 @@ const rideSchema = new mongoose.Schema({
       lowercase: true,
     },
   },
+  
   ride: {
-    registrationNumber: {
-      type: String,
-      required: false,
-      trim: true,
-    },
     pickupAddress: {
       type: String,
       required: true,
@@ -31,26 +27,50 @@ const rideSchema = new mongoose.Schema({
       required: true,
       trim: true,
     },
+    distance: {
+      type: Number,
+      required: true, // Assuming distance is required
+    },
+    userLatitude: {
+      type: Number,
+      required: true, // Assuming userLatitude is required
+    },
+    userLongitude: {
+      type: Number,
+      required: true, // Assuming userLongitude is required
+    },
+    destinationLatitude: {
+      type: Number,
+      required: true, // Assuming destinationLatitude is required
+    },
+    destinationLongitude: {
+      type: Number,
+      required: true, // Assuming destinationLongitude is required
+    },
     price: {
       type: Number,
       required: true,
       min: 0,
     },
-    pickupTime: {
-      type: String,
+    selectedDate: {
+      type: Date, // Assuming selectedDate is a date
+      required: true,
+    },
+    selectedTime: {
+      type: String, // Assuming selectedTime is a string
       required: true,
     },
     carSeats: {
       type: Number,
       required: true,
-      min: 1,
+      default: 4, // Static value
     },
     status: {
-        type: String,
-        required: true,
-        enum: ['pending', 'completed', 'live'],
-        default: 'pending',
-      },
+      type: String,
+      required: true,
+      enum: ['pending', 'completed', 'live'],
+      default: 'pending',
+    },
   },
   driver: {
     id: {
