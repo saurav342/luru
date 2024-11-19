@@ -10,7 +10,7 @@ const generateOTP = catchAsync(async (req, res) => {
 
 const register = catchAsync(async (req, res) => {
   const { otp } = req.body;
-  if(otp == 1234) {
+  if(otp === 1234) {
     const user = await userService.createUser(req.body);
     const tokens = await tokenService.generateAuthTokens(user);
     res.status(httpStatus.CREATED).send({ user, tokens });
