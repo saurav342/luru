@@ -9,15 +9,14 @@ const generateOTP = catchAsync(async (req, res) => {
 });
 
 const register = catchAsync(async (req, res) => {
-  // let nameObj = {name : ''};
-  // if(req.body.phoneNumber) {
-  //   nameObj = await userService.getTempUser(req.body.phoneNumber);
-  // }
-  // console.log('....nameObj...', nameObj);
-  // req.body.name = nameObj.name ? nameObj.name : ' ';
-  const user = await userService.createUser(req.body);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.status(httpStatus.CREATED).send({ user, tokens });
+  const { otp } = req.body;
+  if(otp == 1234) {
+    const user = await userService.createUser(req.body);
+    const tokens = await tokenService.generateAuthTokens(user);
+    res.status(httpStatus.CREATED).send({ user, tokens });
+  } else {
+    res.status(httpStatus.BAD_REQUEST).send({ message: 'Invalid OTP' });
+  }
 });
 
 const login = catchAsync(async (req, res) => {
