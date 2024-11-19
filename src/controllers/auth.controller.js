@@ -9,9 +9,12 @@ const generateOTP = catchAsync(async (req, res) => {
 });
 
 const register = catchAsync(async (req, res) => {
-  const name = await userService.getTempUser(req.body.phoneNumber);
-  console.log('.......', name);
-  req.body.name = name.name;
+  let nameObj = {};
+  if(req.body.phoneNumber) {
+    nameObj = await userService.getTempUser(req.body.phoneNumber);
+  }
+  console.log('.......', nameObj);
+  req.body.name = nameObj.name;
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
