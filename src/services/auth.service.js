@@ -19,6 +19,15 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   return user;
 };
 
+
+const loginUserWithOTP = async (phoneNumber) => {
+  const user = await userService.getUserByPhoneNumber(phoneNumber);
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect phone number or OTP');
+  }
+  return user;
+};
+
 /**
  * Logout
  * @param {string} refreshToken
@@ -96,4 +105,5 @@ module.exports = {
   refreshAuth,
   resetPassword,
   verifyEmail,
+  loginUserWithOTP,
 };

@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
+const { TempUser } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -7,9 +8,16 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
+// const createUser = async (userBody) => {
+//   if (await User.isEmailTaken(userBody.email)) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+//   }
+//   return User.create(userBody);
+// };
+
 const createUser = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  if (await User.isPhoneNumberTaken(userBody.phoneNumber)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Phone number already taken');
   }
   return User.create(userBody);
 };
@@ -37,6 +45,15 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
+
+const createTempUser = async (userBody) => {
+  return TempUser.create(userBody);
+};
+
+const getTempUser = async (phoneNumber) => {
+  return TempUser.findOne({phoneNumber});
+};
+
 /**
  * Get user by email
  * @param {string} email
@@ -44,6 +61,12 @@ const getUserById = async (id) => {
  */
 const getUserByEmail = async (email) => {
   return User.findOne({ email });
+};
+
+
+ 
+const getUserByPhoneNumber = async (phoneNumber) => {
+  return User.findOne({ phoneNumber });
 };
 
 /**
@@ -57,7 +80,7 @@ const updateUserById = async (userId, updateBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+  if (updateBody.email && (await User.isPhoneNumberTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
   Object.assign(user, updateBody);
@@ -86,4 +109,7 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  getUserByPhoneNumber,
+  getTempUser,
+  createTempUser,
 };
