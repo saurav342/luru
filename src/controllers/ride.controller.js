@@ -32,6 +32,15 @@ const getRide = catchAsync(async (req, res) => {
   res.send(ride);
 });
 
+
+const getRideByUserPhoneNumber = catchAsync(async (req, res) => {
+  const rides = await rideService.getRidesByUserId(req.params.userPhoneNumber);
+  if (!rides || rides.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No rides found for this user');
+  }
+  res.send(rides);
+});
+
 const updateRide = catchAsync(async (req, res) => {
   const ride = await rideService.updateRideById(req.params.rideId, req.body);
   res.send(ride);
@@ -48,5 +57,6 @@ module.exports = {
   getRide,
   updateRide,
   deleteRide,
+  getRideByUserPhoneNumber,
 };
 

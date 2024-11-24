@@ -37,10 +37,17 @@ const deleteRideById = async (rideId) => {
   return ride;
 };
 
+
+const getRidesByUserId = async (userId) => {
+  const rides = await Ride.find({ "user.phoneNumber" : userId });
+  return rides;
+};
+
 module.exports = {
   createRide,
   queryRides,
   getRideById,
   updateRideById,
   deleteRideById,
+  getRidesByUserId,
 };

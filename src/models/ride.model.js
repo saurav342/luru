@@ -8,12 +8,15 @@ const rideSchema = new mongoose.Schema({
       required: false,
       trim: true,
     },
-    email: {
-      type: String,
+    phoneNumber: {
+      type: Number,
       required: false,
       trim: true,
-      lowercase: true,
     },
+    id:{
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+    }
   },
   
   ride: {

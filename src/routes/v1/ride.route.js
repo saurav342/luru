@@ -13,4 +13,7 @@ router.route('/')
 router.route('/:rideId')
   .put(rideController.updateRide);
 
+router.route('/user/:userPhoneNumber')
+  .get(rideController.getRideByUserPhoneNumber);
+
 module.exports = router;
