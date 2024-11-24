@@ -11,34 +11,20 @@ const sendOTP = catchAsync(async (req, res) => {
 const verifyOtp = catchAsync(async (req, res) => {
   const { otp } = req.body;
   if(otp === 1234) {
-    const user = await userService.createUser(req.body);
-    const tokens = await tokenService.generateAuthTokens(user);
-    res.status(httpStatus.CREATED).send({ user, tokens });
+    const isUserExists = await userService.getUserByPhoneNumber(req.body.phoneNumber);
+    if(isUserExists) {
+      const tokens = await tokenService.generateAuthTokens(isUserExists);
+      res.status(httpStatus.OK).send({ user: isUserExists, tokens });
+    } else {
+      const user = await userService.createUser(req.body);
+      const tokens = await tokenService.generateAuthTokens(user);
+      res.status(httpStatus.CREATED).send({ user, tokens });
+    }
+
   } else {
     res.status(httpStatus.BAD_REQUEST).send({ message: 'Invalid OTP' });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const login = catchAsync(async (req, res) => {
