@@ -441,3 +441,26 @@ Contributions are more than welcome! Please check out the [contributing guide](C
 # luru
 # luru
 # luru
+
+
+
+
+
+
+/send-otp 
+
+this will send the otp to the user mobile
+
+body : {phoneNumber : 12345677778}
+
+response : {
+  "msg" : "sent otp success"
+}
+
+/verify-otp
+
+body : {phoneNumber : 12345677778, otp : 1234}
+
+response : {
+  token : "234234234234
+}

@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { password, objectId } = require('./custom.validation');
+const { isNameAdded } = require('../models/user.model'); // Import the new function
 
 const createUser = {
   body: Joi.object().keys({

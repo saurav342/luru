@@ -1,18 +1,21 @@
 const Joi = require('joi');
 const { password } = require('./custom.validation');
 
-const register = {
+const verifyOtp = {
   body: Joi.object().keys({
     otp: Joi.number().required(),
     phoneNumber: Joi.number().required(),
   }),
 };
 
-const otp = {
+const sendOTP = {
   body: Joi.object().keys({
     phoneNumber: Joi.number().required(),
   }),
 };
+
+
+
 
 const login = {
   body: Joi.object().keys({
@@ -54,12 +57,12 @@ const verifyEmail = {
 };
 
 module.exports = {
-  register,
   login,
   logout,
   refreshTokens,
   forgotPassword,
   resetPassword,
   verifyEmail,
-  otp,
+  verifyOtp,
+  sendOTP,
 };

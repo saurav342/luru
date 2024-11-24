@@ -47,11 +47,11 @@ const userSchema = mongoose.Schema(
     //   },
     //   private: true, // used by the toJSON plugin
     // },
-    // role: {
-    //   type: String,
-    //   enum: roles,
-    //   default: 'user',
-    // },
+    role: {
+      type: String,
+      enum: roles,
+      default: 'user',
+    },
     // isEmailVerified: {
     //   type: Boolean,
     //   default: false,
@@ -75,6 +75,18 @@ userSchema.plugin(paginate);
 userSchema.statics.isPhoneNumberTaken = async function (phoneNumber, excludeUserId) {
   const user = await this.findOne({ phoneNumber, _id: { $ne: excludeUserId } });
   return !!user;
+};
+
+
+/**
+ * Check if email is taken
+ * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.isNameAdded = async function (phoneNumber) {
+  const user = await this.findOne({ phoneNumber });
+  return user && user.name ? true : false; // Check if user exists and has a name
 };
 
 /**

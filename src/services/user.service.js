@@ -16,9 +16,9 @@ const ApiError = require('../utils/ApiError');
 // };
 
 const createUser = async (userBody) => {
-  if (await User.isPhoneNumberTaken(userBody.phoneNumber)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Phone number already taken');
-  }
+  // if (await User.isPhoneNumberTaken(userBody.phoneNumber)) {
+  //   throw new ApiError(httpStatus.BAD_REQUEST, 'Phone number already taken');
+  // }
   return User.create(userBody);
 };
 

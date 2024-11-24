@@ -8,7 +8,6 @@ const { rideService } = require('../services');
 
 const createRide = catchAsync(async (req, res) => {
   try {
-    console.log('..................', req.body);
     const ride = await rideService.createRide(req.body);
     res.status(httpStatus.CREATED).send(ride);
   } catch (error) {
