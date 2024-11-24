@@ -39,6 +39,7 @@ const deleteRideById = async (rideId) => {
 
 
 const getRidesByUserId = async (userId) => {
+  console.log('............uswrr id ........', userId);
   const rides = await Ride.find({ "user.phoneNumber" : userId });
   return rides;
 };
