@@ -24,7 +24,7 @@ router
 router
   .route('/phone-num/:phoneNumber')
   .get(auth('getAnUser'), userController.getUserByPhoneNumber)
-  .put(auth('getAnUser'), userController.getUser)
+  .put(auth('getAnUser'), userController.updateUserByPhoneNumber)
 
 
 module.exports = router;

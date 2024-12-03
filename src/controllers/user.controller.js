@@ -40,7 +40,7 @@ const updateUser = catchAsync(async (req, res) => {
 });
 
 const updateUserByPhoneNumber = catchAsync(async (req, res) => {
-  const user = await userService.getUserById(req.params.userId);
+  const user = await userService.updateUserByPhoneNumber(req.params.phoneNumber, req.body);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
