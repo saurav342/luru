@@ -19,7 +19,8 @@ const sendOTP = {
 
 const login = {
   body: Joi.object().keys({
-    phoneNumber: Joi.number().required(),
+    id: Joi.string().required(),
+    password: Joi.string().required(),
   }),
 };
 

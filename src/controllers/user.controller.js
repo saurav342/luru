@@ -24,8 +24,10 @@ const getUser = catchAsync(async (req, res) => {
   res.send(user);
 });
 
-const getUserByEmail = catchAsync(async (req, res) => {
-  const user = await userService.getUserByEmail(req.params.email);
+
+
+const getUserByPhoneNumber = catchAsync(async (req, res) => {
+  const user = await userService.getUserByPhoneNumber(req.params.phoneNumber);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -34,6 +36,14 @@ const getUserByEmail = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const user = await userService.updateUserById(req.params.userId, req.body);
+  res.send(user);
+});
+
+const updateUserByPhoneNumber = catchAsync(async (req, res) => {
+  const user = await userService.getUserById(req.params.userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
   res.send(user);
 });
 
@@ -48,4 +58,6 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getUserByPhoneNumber,
+  updateUserByPhoneNumber,
 };
