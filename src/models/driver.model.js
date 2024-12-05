@@ -65,7 +65,7 @@ let counter = 1; // This should ideally be stored in a persistent way, such as i
 driverSchema.pre('save', async function (next) {
   const driver = this;
   if (!driver.driverIdentity) {
-    driver.driverIdentity = `BLR00${String(counter).padStart(3, '0')}`;
+    driver.driverIdentity = `B${String(counter).padStart(1, '0')}`;
     counter += 1; // Increment the counter for the next driver
   }
   if (driver.isModified('password')) {
