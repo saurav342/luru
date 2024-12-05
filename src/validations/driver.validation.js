@@ -3,6 +3,7 @@ const { objectId } = require('./custom.validation');
 
 const createDriver = {
   body: Joi.object().keys({
+    name: Joi.string().required(),
     userId: Joi.string().custom(objectId).required(),
     licenseNumber: Joi.string().required(),
     isAvailable: Joi.boolean(),

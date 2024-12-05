@@ -3,6 +3,11 @@ const { toJSON, paginate } = require('./plugins');
 
 const driverSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     userId: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'User',
