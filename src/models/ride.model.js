@@ -76,18 +76,45 @@ const rideSchema = new mongoose.Schema({
     },
   },
   driver: {
-    id: {
+    currentLocation: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    rating: {
       type: Number,
-      required: false,
+      default: 0,
+    },
+    totalRides: {
+      type: Number,
+      default: 0,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
     name: {
       type: String,
-      required: false,
+      required: true,
       trim: true,
     },
-    carDetails: {
+    licenseNumber: {
       type: String,
-      required: false,
+      required: true,
+    },
+    driverIdentity: {
+      type: String,
+      required: true,
     },
   },
   payment: {

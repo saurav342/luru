@@ -1,5 +1,6 @@
-
 const Ride = require('../models/ride.model');
+const Driver = require('../models/driver.model'); // assuming Driver model is defined in driver.model.js
+const CarAssignment = require('../models/carAssignment.model'); // assuming CarAssignment model is defined in carAssignment.model.js
 
 const createRide = async (rideData) => {
   return Ride.create(rideData);
@@ -20,10 +21,27 @@ const updateRideById = async (rideId, updateBody) => {
   if (!ride) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Ride not found');
   }
-  console.log('...................1.........', ride);
-  console.log('....................2........', updateBody);
-  Object.assign(ride, {ride : {...ride.ride, ...updateBody}});
-  console.log('....................3........', ride);
+  
+  if (updateBody.driverId) {
+    const driver = await Driver.findById(updateBody.driverId);
+    if (!driver) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Driver not found');
+    }
+    const carAssignment = await CarAssignment.findOne({ driver: driver._id }).populate('car');
+    updateBody.driver = {
+      currentLocation: driver.currentLocation,
+      isAvailable: driver.isAvailable,
+      rating: driver.rating,
+      totalRides: driver.totalRides,
+      isVerified: driver.isVerified,
+      name: driver.name || '',
+      licenseNumber: driver.licenseNumber || '',
+      driverIdentity: driver.driverIdentity || '',
+      carDetails: carAssignment ? carAssignment.car : null,
+    };
+  }
+  
+  Object.assign(ride, updateBody);
   await ride.save();
   return ride;
 };
