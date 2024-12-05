@@ -67,10 +67,14 @@ const verifyEmail = catchAsync(async (req, res) => {
 });
 
 const loginDriver = catchAsync(async (req, res) => {
-  const { driverIdentity, password } = req.body;
-  const driver = await authService.loginDriverWithIdentityAndPassword(driverIdentity, password);
-  const tokens = await tokenService.generateAuthTokens(driver);
-  res.send({ driver, tokens });
+  try {
+    const driver = await authService.loginDriverWithIdentityAndPassword(req.body.driverIdentity, req.body.password);
+    const tokens = await tokenService.generateAuthTokens(driver);
+    res.send({ driver, tokens });
+  } catch (error) {
+    console.log('..................', error);
+    res.status(httpStatus.UNAUTHORIZED).send({ message: error.message });
+  }
 });
 
 module.exports = {

@@ -36,11 +36,17 @@ const loginUserWithOTP = async (phoneNumber) => {
  * @returns {Promise<Driver>}
  */
 const loginDriverWithIdentityAndPassword = async (driverIdentity, password) => {
-  const driver = await Driver.findOne({ driverIdentity });
-  if (!driver || !(await driver.isPasswordMatch(password))) {
+  try {
+    const driver = await Driver.findOne({ driverIdentity });
+    console.log('.........driver......', driver);
+    if (!driver || !(await driver.isPasswordMatch(password))) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect driver identity or password');
+    }
+    return driver;
+  } catch (error) {
+    console.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect driver identity or password');
   }
-  return driver;
 };
 
 /**
