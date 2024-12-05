@@ -29,8 +29,7 @@ const verifyOtp = catchAsync(async (req, res) => {
 
 const login = catchAsync(async (req, res) => {
   const { phoneNumber } = req.body;
-  // const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const user = await authService.loginUserWithOTP(phoneNumber);
+  const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
 });
@@ -67,6 +66,13 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const loginDriver = catchAsync(async (req, res) => {
+  const { driverIdentity, password } = req.body;
+  const driver = await authService.loginDriverWithIdentityAndPassword(driverIdentity, password);
+  const tokens = await tokenService.generateAuthTokens(driver);
+  res.send({ driver, tokens });
+});
+
 module.exports = {
   login,
   logout,
@@ -77,4 +83,5 @@ module.exports = {
   verifyEmail,
   sendOTP,
   verifyOtp,
+  loginDriver,
 };

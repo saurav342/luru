@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const tokenService = require('./token.service');
 const userService = require('./user.service');
+const Driver = require('../models/driver.model'); // assuming you have a Driver model
 const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
@@ -26,6 +27,20 @@ const loginUserWithOTP = async (phoneNumber) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect phone number or OTP');
   }
   return user;
+};
+
+/**
+ * Login with driver identity and password
+ * @param {string} driverIdentity
+ * @param {string} password
+ * @returns {Promise<Driver>}
+ */
+const loginDriverWithIdentityAndPassword = async (driverIdentity, password) => {
+  const driver = await Driver.findOne({ driverIdentity });
+  if (!driver || !(await driver.isPasswordMatch(password))) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect driver identity or password');
+  }
+  return driver;
 };
 
 /**
@@ -101,6 +116,7 @@ const verifyEmail = async (verifyEmailToken) => {
 
 module.exports = {
   loginUserWithEmailAndPassword,
+  loginDriverWithIdentityAndPassword,
   logout,
   refreshAuth,
   resetPassword,

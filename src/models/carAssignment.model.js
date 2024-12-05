@@ -10,7 +10,7 @@ const carAssignmentSchema = mongoose.Schema(
     },
     driver: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'User',
+      ref: 'Driver',
       required: true,
     },
     status: {

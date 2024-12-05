@@ -18,7 +18,10 @@ const createCarAssignment = async (carAssignmentBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryCarAssignments = async (filter, options) => {
-  const carAssignments = await CarAssignment.paginate(filter, options);
+  const carAssignments = await CarAssignment.find(filter)
+    .populate('driver')
+    .populate('car')
+    .exec();
   return carAssignments;
 };
 
