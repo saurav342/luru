@@ -5,3 +5,5 @@ module.exports.userService = require('./user.service');
 module.exports.rideService = require('./ride.service');
 module.exports.carService = require('./car.service');
 module.exports.driverService = require('./driver.service');
+module.exports.rideAssignmentService = require('./rideAssignment.service');
+module.exports.carAssignmentService = require('./carAssignment.service');
