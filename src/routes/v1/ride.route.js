@@ -10,6 +10,9 @@ router.route('/')
   .get(auth('getRides'), rideController.getRides)
   // .get(rideController.getRides);
 
+router.route('/driver/:driverIdentity')
+  .get(rideController.getRidesByDriverIdentity);
+
 router.route('/:rideId')
   .put(rideController.updateRide);
 

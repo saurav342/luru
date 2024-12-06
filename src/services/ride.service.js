@@ -62,6 +62,10 @@ const getRidesByUserId = async (userId) => {
   return rides;
 };
 
+const getRidesByDriverIdentity = async (driverIdentity) => {
+  return Ride.find({ 'driver.driverIdentity': driverIdentity });
+};
+
 module.exports = {
   createRide,
   queryRides,
@@ -69,4 +73,5 @@ module.exports = {
   updateRideById,
   deleteRideById,
   getRidesByUserId,
+  getRidesByDriverIdentity,
 };

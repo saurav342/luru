@@ -51,6 +51,12 @@ const deleteRide = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getRidesByDriverIdentity = catchAsync(async (req, res) => {
+  const { driverIdentity } = req.params;
+  const rides = await rideService.getRidesByDriverIdentity(driverIdentity);
+  res.send(rides);
+});
+
 module.exports = {
   createRide,
   getRides,
@@ -58,5 +64,5 @@ module.exports = {
   updateRide,
   deleteRide,
   getRideByUserPhoneNumber,
+  getRidesByDriverIdentity,
 };
-

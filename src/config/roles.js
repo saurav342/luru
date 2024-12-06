@@ -1,7 +1,7 @@
 const allRoles = {
   user: ['getRides', 'createRide', 'getAnUser'],
   admin: ['getUsers', 'manageUsers', 'updateCarDriver', 'manageCars', 'getCars', 'getRides'],
-  driver: ['getDriverRides', 'updateRide']
+  driver: ['getDriverRides', 'updateRide', 'getRides']
 };
 
 const roles = Object.keys(allRoles);
