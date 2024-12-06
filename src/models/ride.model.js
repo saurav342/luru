@@ -105,16 +105,16 @@ const rideSchema = new mongoose.Schema({
     },
     name: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     licenseNumber: {
       type: String,
-      required: true,
+      required: false,
     },
     driverIdentity: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   payment: {
