@@ -2,6 +2,7 @@ const Ride = require('../models/ride.model');
 const Driver = require('../models/driver.model'); // assuming Driver model is defined in driver.model.js
 const CarAssignment = require('../models/carAssignment.model'); // assuming CarAssignment model is defined in carAssignment.model.js
 const User = require('../models/user.model'); // assuming User model is defined in user.model.js
+const ApiError = require('../../src/utils/ApiError');
 
 const createRide = async (rideBody) => {
   const user = await User.findById(rideBody.userId);
