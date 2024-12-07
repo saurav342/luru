@@ -63,6 +63,10 @@ const rideSchema = new mongoose.Schema({
       type: String, // Assuming selectedTime is a string
       required: true,
     },
+    finalDateTime: {
+      type: String, // Assuming selectedTime is a string
+      required: true,
+    },
     carSeats: {
       type: Number,
       required: true,

@@ -42,6 +42,10 @@ const updateRideById = async (rideId, updateBody) => {
   }
   
   Object.assign(ride, updateBody);
+  
+  // Mark the ride status as 'live'
+  ride.ride.status = 'live';
+
   await ride.save();
   return ride;
 };
