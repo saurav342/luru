@@ -5,10 +5,10 @@ const User = require('../models/user.model'); // assuming User model is defined 
 const ApiError = require('../../src/utils/ApiError');
 
 const createRide = async (rideBody) => {
-  const user = await User.findById(rideBody.userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
+  const user = await User.findById(rideBody.user.id);
+  // if (!user) {
+  //   throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  // }
   const ride = new Ride({
     ...rideBody,
     userName: user.name,
