@@ -93,6 +93,16 @@ const getRidesByDriverIdentity = async (driverIdentity) => {
   return Promise.all(updatedRides); // Wait for all modifications to complete
 };
 
+const completeRide = async (rideId) => {
+  const ride = await Ride.findById(rideId);
+  if (!ride) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Ride not found');
+  }
+  ride.ride.status = 'completed';
+  await ride.save();
+  return ride;
+};
+
 module.exports = {
   createRide,
   queryRides,
@@ -101,4 +111,5 @@ module.exports = {
   deleteRideById,
   getRidesByUserId,
   getRidesByDriverIdentity,
+  completeRide,
 };

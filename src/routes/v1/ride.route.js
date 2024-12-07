@@ -19,4 +19,7 @@ router.route('/:rideId')
 router.route('/user/:userPhoneNumber')
   .get(rideController.getRideByUserPhoneNumber);
 
+router.route('/complete/ride/:rideId')
+  .put(auth('updateRide'), rideController.completeRide);
+
 module.exports = router;

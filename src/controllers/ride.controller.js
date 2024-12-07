@@ -57,6 +57,12 @@ const getRidesByDriverIdentity = catchAsync(async (req, res) => {
   res.send(rides);
 });
 
+const completeRide = catchAsync(async (req, res) => {
+  const { rideId } = req.params;
+  const ride = await rideService.completeRide(rideId);
+  res.send(ride);
+});
+
 module.exports = {
   createRide,
   getRides,
@@ -65,4 +71,5 @@ module.exports = {
   deleteRide,
   getRideByUserPhoneNumber,
   getRidesByDriverIdentity,
+  completeRide,
 };
