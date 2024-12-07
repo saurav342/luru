@@ -78,7 +78,19 @@ const getRidesByUserId = async (userId) => {
 };
 
 const getRidesByDriverIdentity = async (driverIdentity) => {
-  return Ride.find({ 'driver.driverIdentity': driverIdentity });
+  const rides = await Ride.find({ 'driver.driverIdentity': driverIdentity });
+
+  const updatedRides = rides.map(async (ride) => {
+    const rideObj = ride.toObject(); // Convert to plain object
+    const user = await User.findById(ride.user.id);
+    if (user) {
+      rideObj.user = rideObj.user || {}; // Ensure ride.user exists
+      rideObj.user.name = user.name; // Add the user's name to ride.user
+    }
+    return rideObj;
+  });
+
+  return Promise.all(updatedRides); // Wait for all modifications to complete
 };
 
 module.exports = {
