@@ -19,6 +19,11 @@ const fs = require('fs');
 
 const app = express();
 
+// Add this near the top of your file, after imports
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled Promise Rejection:', error);
+});
+
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);

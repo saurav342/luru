@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-  _id: {
-    type: String,
-    required: true,
-    unique: true
-  },
   name: {
     type: String,
     trim: true
@@ -55,6 +50,9 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  timestamps: true,
+  _id: true  // This is default behavior, MongoDB will auto-generate _id
 });
 
 bookingSchema.set('autoIndex', false);

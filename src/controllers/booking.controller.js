@@ -7,8 +7,16 @@ const ApiError = require('../utils/ApiError');
  * @param {Object} bookingBody
  * @returns {Promise<Booking>}
  */
-const createBooking = async (bookingBody) => {
-  return Booking.create(bookingBody);
+const createBooking = async (req, res, next) => {
+  try {
+    const booking = new Booking({
+      ...req.body
+    });
+    const savedBooking = await booking.save();
+    res.status(httpStatus.CREATED).send(savedBooking);
+  } catch (error) {
+    next(error);
+  }
 };
 
 /**
