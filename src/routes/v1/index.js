@@ -4,6 +4,7 @@ const userRoute = require('./user.route');
 const docsRoute = require('./docs.route');
 const rideRoute = require('./ride.route');
 const carRoute = require('./car.route');
+const bookingsRoute = require('./booking.route');
 const driverRoute = require('./driver.route');
 const carAssignmentRoute = require('./carAssignment.route');
 const config = require('../../config/config');
@@ -34,6 +35,10 @@ const defaultRoutes = [
   {
     path: '/carAssignments',
     route: carAssignmentRoute,
+  },
+  {
+    path: '/bookings',
+    route: bookingsRoute,
   },
 ];
 
