@@ -13,6 +13,9 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 
 const app = express();
 
@@ -64,4 +67,29 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-module.exports = app;
+// SSL/HTTPS configuration
+const options = {
+  cert: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/privkey.pem')
+};
+
+if (config.env === 'production') {
+  // Create HTTPS server
+  https.createServer(options, app).listen(443, () => {
+    console.log('HTTPS Server running on port 443');
+  });
+
+  // Redirect HTTP to HTTPS
+  const httpApp = express();
+  httpApp.use((req, res) => {
+    res.redirect(`https://${req.hostname}${req.url}`);
+  });
+  http.createServer(httpApp).listen(80, () => {
+    console.log('HTTP Server running on port 80 (redirecting to HTTPS)');
+  });
+} else {
+  // For development/test environments, use regular HTTP
+  app.listen(config.port, () => {
+    console.log(`HTTP Server running on port ${config.port}`);
+  });
+}
