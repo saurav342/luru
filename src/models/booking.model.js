@@ -4,8 +4,7 @@ const bookingSchema = new mongoose.Schema({
   _id: {
     type: String,
     required: true,
-    unique: true,
-    index: false
+    unique: true
   },
   name: {
     type: String,
