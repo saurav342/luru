@@ -72,29 +72,37 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-// SSL/HTTPS configuration
-const options = {
-  cert: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/fullchain.pem'),
-  key: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/privkey.pem')
+// Create an object to store our servers
+const server = {
+  app,
+  start: () => {
+    if (config.env === 'production') {
+      // SSL/HTTPS configuration
+      const options = {
+        cert: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/fullchain.pem'),
+        key: fs.readFileSync('/etc/letsencrypt/live/backend.malamacabs.com/privkey.pem')
+      };
+
+      // Create HTTPS server
+      https.createServer(options, app).listen(443, () => {
+        console.log('HTTPS Server running on port 443');
+      });
+
+      // Redirect HTTP to HTTPS
+      const httpApp = express();
+      httpApp.use((req, res) => {
+        res.redirect(`https://${req.hostname}${req.url}`);
+      });
+      http.createServer(httpApp).listen(80, () => {
+        console.log('HTTP Server running on port 80 (redirecting to HTTPS)');
+      });
+    } else {
+      // For development/test environments, use regular HTTP
+      app.listen(config.port, () => {
+        console.log(`HTTP Server running on port ${config.port}`);
+      });
+    }
+  }
 };
 
-if (config.env === 'production') {
-  // Create HTTPS server
-  https.createServer(options, app).listen(443, () => {
-    console.log('HTTPS Server running on port 443');
-  });
-
-  // Redirect HTTP to HTTPS
-  const httpApp = express();
-  httpApp.use((req, res) => {
-    res.redirect(`https://${req.hostname}${req.url}`);
-  });
-  http.createServer(httpApp).listen(80, () => {
-    console.log('HTTP Server running on port 80 (redirecting to HTTPS)');
-  });
-} else {
-  // For development/test environments, use regular HTTP
-  app.listen(config.port, () => {
-    console.log(`HTTP Server running on port ${config.port}`);
-  });
-}
+module.exports = server;
