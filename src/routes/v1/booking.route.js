@@ -1,7 +1,7 @@
 const express = require('express');
 const bookingController = require('../../controllers/booking.controller');
 const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
+const ApiError = require('../../utils/ApiError');
 
 const router = express.Router();
 
