@@ -75,6 +75,8 @@ app.use(errorHandler);
 // Create an object to store our servers
 const server = {
   app,
+  httpServer: null,
+  httpsServer: null,
   start: () => {
     if (config.env === 'production') {
       // SSL/HTTPS configuration
@@ -84,7 +86,7 @@ const server = {
       };
 
       // Create HTTPS server
-      https.createServer(options, app).listen(443, () => {
+      server.httpsServer = https.createServer(options, app).listen(443, () => {
         console.log('HTTPS Server running on port 443');
       });
 
@@ -93,15 +95,24 @@ const server = {
       httpApp.use((req, res) => {
         res.redirect(`https://${req.hostname}${req.url}`);
       });
-      http.createServer(httpApp).listen(80, () => {
+      server.httpServer = http.createServer(httpApp).listen(80, () => {
         console.log('HTTP Server running on port 80 (redirecting to HTTPS)');
       });
     } else {
       // For development/test environments, use regular HTTP
-      app.listen(config.port, () => {
+      server.httpServer = app.listen(config.port, () => {
         console.log(`HTTP Server running on port ${config.port}`);
       });
     }
+  },
+  close: (callback) => {
+    if (server.httpServer) {
+      server.httpServer.close();
+    }
+    if (server.httpsServer) {
+      server.httpsServer.close();
+    }
+    if (callback) callback();
   }
 };
 

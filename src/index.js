@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
-const server = require('./app');
+const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
 
-let server;
+let serverInstance;
 
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info('Connected to MongoDB');
-  server.start();
+  app.start();
 });
 
 const exitHandler = () => {
-  if (server) {
-    server.close(() => {
+  if (serverInstance) {
+    serverInstance.close(() => {
       logger.info('Server closed');
       process.exit(1);
     });
@@ -31,7 +31,7 @@ process.on('unhandledRejection', unexpectedErrorHandler);
 
 process.on('SIGTERM', () => {
   logger.info('SIGTERM received');
-  if (server) {
-    server.close();
+  if (serverInstance) {
+    serverInstance.close();
   }
 });
