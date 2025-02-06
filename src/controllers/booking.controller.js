@@ -4,7 +4,9 @@ const ApiError = require('../utils/ApiError');
 
 /**
  * Create a booking
- * @param {Object} bookingBody
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
  * @returns {Promise<Booking>}
  */
 const createBooking = async (req, res, next) => {
