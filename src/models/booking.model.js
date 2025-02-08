@@ -18,23 +18,17 @@ const bookingSchema = new mongoose.Schema({
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email']
   },
   dateTime: {
-    type: Date,
+    type: String,
     required: [true, 'Booking date and time is required'],
-    validate: {
-      validator: function(v) {
-        return v > new Date();
-      },
-      message: 'Booking date must be in the future'
-    }
   },
   fromLocation: {
     type: String,
-    required: [true, 'Pick-up location is required'],
+    // required: [true, 'Pick-up location is required'],
     trim: true
   },
   toLocation: {
     type: String,
-    required: [true, 'Drop-off location is required'],
+    // required: [true, 'Drop-off location is required'],
     trim: true
   },
   notes: {
@@ -43,13 +37,25 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'completed', 'cancelled'],
+    enum: ['pending', 'confirmed', 'completed', 'cancelled', 'Empty', 'Scheduled'],
     default: 'pending'
   },
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  specialReq: {
+    type: String,
+    default: '',
+  },
+  driverName: {
+    type: String,
+    default: '',
+  },
+  tripCost: {
+    type: Number,
+    required: true,
+  },
 }, {
   timestamps: true,
   _id: true  // This is default behavior, MongoDB will auto-generate _id
