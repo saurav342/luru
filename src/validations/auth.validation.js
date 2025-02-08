@@ -14,12 +14,9 @@ const sendOTP = {
   }),
 };
 
-
-
-
 const login = {
   body: Joi.object().keys({
-    driverIdentity: Joi.string().required(),
+    email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
 };
@@ -57,6 +54,14 @@ const verifyEmail = {
   }),
 };
 
+// New validation for admin login
+const loginAdmin = {
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   login,
   logout,
@@ -66,4 +71,5 @@ module.exports = {
   verifyEmail,
   verifyOtp,
   sendOTP,
+  loginAdmin,
 };

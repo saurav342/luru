@@ -1,6 +1,10 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
+const { User } = require('../models');
+const ApiError = require('../utils/ApiError');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 const sendOTP = catchAsync(async (req, res) => {
@@ -77,6 +81,24 @@ const loginDriver = catchAsync(async (req, res) => {
   }
 });
 
+const loginAdmin = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await User.findOne({ email, role: 'admin' }); // Assuming you have a role field
+    console.log('..................', admin);
+    if (!admin) {
+      // if (!admin || !(await bcrypt.compare(password, admin.password))) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password');
+    }
+
+    const tokens = await tokenService.generateAuthTokens(admin); // Assuming you have a function to generate tokens
+    res.status(httpStatus.OK).send({ user: admin, tokens });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   login,
   logout,
@@ -88,4 +110,5 @@ module.exports = {
   sendOTP,
   verifyOtp,
   loginDriver,
+  loginAdmin,
 };
