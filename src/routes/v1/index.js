@@ -8,6 +8,7 @@ const bookingsRoute = require('./booking.route');
 const driverRoute = require('./driver.route');
 const carAssignmentRoute = require('./carAssignment.route');
 const config = require('../../config/config');
+const gupshupRoutes = require('./gupshup.route');
 
 const router = express.Router();
 
@@ -39,6 +40,10 @@ const defaultRoutes = [
   {
     path: '/bookings',
     route: bookingsRoute,
+  },
+  {
+    path: '/gupshup',
+    route: gupshupRoutes,
   },
 ];
 
