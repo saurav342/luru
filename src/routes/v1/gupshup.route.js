@@ -5,17 +5,27 @@ const router = express.Router();
 router.post("/gupshup-webhook", async (req, res) => {
     console.log("Incoming Message:", JSON.stringify(req.body, null, 2));
 
-    const { type, sender, message } = req.body;
+    const { entry } = req.body; // Extract the entry array
 
-    if (type === "message") {
-        console.log(`📩 Message from ${sender.phone}: ${message.text}`);
+    if (entry && entry[0].changes[0].field === "messages") {
+        const { contacts, messages } = entry[0].changes[0].value; // Extract contacts and messages
+
+        // Assuming there's at least one contact and one message
+        const contact = contacts[0];
+        const message = messages[0];
+
+        const profileName = contact.profile.name; // Extract profile name
+        const waId = contact.wa_id; // Extract wa_id
+        const text = message.text.body; // Extract message text
+
+        console.log(`📩 Message from ${waId}: ${text}`);
 
         // Create a new Gupshup message
         const gupshupMessage = new Gupshup({
-            profileName: sender.profile.name, // Assuming sender.profile.name exists
-            waId: sender.phone,
-            text: message.text,
-            timestamp: new Date() // Set the current date as the timestamp
+            profileName: profileName,
+            waId: waId,
+            text: text,
+            timestamp: new Date(parseInt(message.timestamp) * 1000) // Convert timestamp to Date
         });
 
         try {
