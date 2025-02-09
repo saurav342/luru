@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Booking = require('../models/booking.model');
 const config = require('../config/config');
 
-const bookings = [
+const bookings1 = [
     {
         fromLocation: 'T1, KIAL',
         toLocation: 'Brigade Cornerstone, Varthur',
@@ -2022,6 +2022,37 @@ const bookings = [
         "tripCost": 0
     }
 ]
+
+const bookings = [];
+const getRandomDate = (start, end) => {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+};
+
+const addRandomBookings = (numBookings) => {
+    const bookings = [];
+    const now = new Date();
+    const end = new Date(now.getTime() + 48 * 60 * 60 * 1000); // 48 hours from now
+
+    for (let i = 0; i < numBookings; i++) {
+        const randomDate = getRandomDate(now, end);
+        bookings.push({
+            fromLocation: 'Random Location ' + (i + 1),
+            toLocation: 'Destination ' + (i + 1),
+            dateTime: randomDate,
+            status: 'completed',
+            name: 'Random User ' + (i + 1),
+            mobile: '123456789' + i,
+            notes: '',
+            driverName: 'Random Driver',
+            tripCost: Math.floor(Math.random() * 1000) + 100, // Random cost between 100 and 1100
+        });
+    }
+    return bookings;
+};
+
+// Add 15 random bookings
+const randomBookings = addRandomBookings(15);
+bookings.push(...randomBookings); // Add random bookings to the existing bookings array
 
 mongoose.connect(config.mongoose.url, config.mongoose.options)
     .then(async () => {
