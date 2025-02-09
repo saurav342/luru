@@ -2,6 +2,7 @@ const express = require('express');
 const bookingController = require('../../controllers/booking.controller');
 const httpStatus = require('http-status');
 const ApiError = require('../../utils/ApiError');
+const Gupshup = require('../../models/gupshup.model');
 
 const router = express.Router();
 
@@ -48,5 +49,18 @@ router
       next(error);
     }
   });
+
+// New route to save Gupshup message
+router.post('/gupshup', async (req, res) => {
+    const { profileName, waId, text, timestamp } = req.body;
+
+    try {
+        const gupshupMessage = new Gupshup({ profileName, waId, text, timestamp });
+        await gupshupMessage.save();
+        res.status(201).json(gupshupMessage);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 module.exports = router;
