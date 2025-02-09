@@ -1,4 +1,5 @@
 const express = require('express');
+const Gupshup = require('../../models/gupshup.model'); // Import the Gupshup model
 const router = express.Router();
 
 router.post("/gupshup-webhook", (req, res) => {
@@ -13,6 +14,29 @@ router.post("/gupshup-webhook", (req, res) => {
     }
 
     res.sendStatus(200); // Send 200 OK response
+});
+
+// Route to get all Gupshup messages
+router.get('/', async (req, res) => {
+    try {
+        const gupshupMessages = await Gupshup.find(); // Fetch all Gupshup messages
+        res.status(200).json(gupshupMessages);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Optionally, you can add a route to get a specific Gupshup message by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const gupshupMessage = await Gupshup.findById(req.params.id); // Fetch Gupshup message by ID
+        if (!gupshupMessage) {
+            return res.status(404).json({ message: 'Gupshup message not found' });
+        }
+        res.status(200).json(gupshupMessage);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 module.exports = router; 
