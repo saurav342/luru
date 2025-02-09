@@ -2,18 +2,33 @@ const express = require('express');
 const Gupshup = require('../../models/gupshup.model'); // Import the Gupshup model
 const router = express.Router();
 
-router.post("/gupshup-webhook", (req, res) => {
+router.post("/gupshup-webhook", async (req, res) => {
     console.log("Incoming Message:", JSON.stringify(req.body, null, 2));
 
-    const { type, payload, sender, message } = req.body;
+    const { type, sender, message } = req.body;
 
     if (type === "message") {
         console.log(`📩 Message from ${sender.phone}: ${message.text}`);
+
+        // Create a new Gupshup message
+        const gupshupMessage = new Gupshup({
+            profileName: sender.profile.name, // Assuming sender.profile.name exists
+            waId: sender.phone,
+            text: message.text,
+            timestamp: new Date() // Set the current date as the timestamp
+        });
+
+        try {
+            await gupshupMessage.save(); // Save the message to the database
+            res.status(201).json(gupshupMessage); // Respond with the saved message
+        } catch (error) {
+            console.error("Error saving Gupshup message:", error);
+            res.status(500).json({ message: error.message });
+        }
     } else {
         console.log("🔔 Other Event:", req.body);
+        res.sendStatus(200); // Send 200 OK response for non-message events
     }
-
-    res.sendStatus(200); // Send 200 OK response
 });
 
 // Route to get all Gupshup messages
