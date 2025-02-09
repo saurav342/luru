@@ -54,7 +54,7 @@ const bookingSchema = new mongoose.Schema({
   },
   tripCost: {
     type: Number,
-    required: true,
+    // required: true,
   },
 }, {
   timestamps: true,
