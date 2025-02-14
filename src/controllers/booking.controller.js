@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Booking } = require('../models');
 const ApiError = require('../utils/ApiError');
+const RideIdCounter = require('../models/rideIdCounter.model');
 
 /**
  * Create a booking
@@ -11,8 +12,10 @@ const ApiError = require('../utils/ApiError');
  */
 const createBooking = async (req, res, next) => {
   try {
+    const rideId = await generateRideId();
     const booking = new Booking({
-      ...req.body
+      ...req.body,
+      rideId,
     });
     const savedBooking = await booking.save();
     res.status(httpStatus.CREATED).send(savedBooking);
@@ -67,6 +70,18 @@ const deleteBookingById = async (bookingId) => {
   }
   await booking.remove();
   return booking;
+};
+
+const generateRideId = async () => {
+  const prefix = 'BLR';
+  const counter = await RideIdCounter.findOneAndUpdate(
+    {}, 
+    { $inc: { sequenceValue: 1 } }, 
+    { new: true, upsert: true }
+  );
+
+  const sequence = counter.sequenceValue.toString().padStart(5, '0');
+  return `${prefix}${sequence}`;
 };
 
 module.exports = {

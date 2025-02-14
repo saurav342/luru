@@ -37,7 +37,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'completed', 'cancelled', 'Empty', 'Scheduled'],
+    enum: ['pending', 'confirmed', 'completed', 'cancelled', 'scheduled', 'rejected'],
     default: 'pending'
   },
   createdAt: {
@@ -55,6 +55,23 @@ const bookingSchema = new mongoose.Schema({
   tripCost: {
     type: Number,
     // required: true,
+  },
+  cancellationReason: {
+    type: String,
+    default: '', // Default to an empty string if no reason is provided
+  },
+  rideId: {
+    type: String,
+    unique: true, // Ensure that each rideId is unique
+    required: true,
+  },
+  actualCost: {
+    type: Number,
+    default: 0, // Default to 0 if not specified
+  },
+  adminComments: {
+    type: String,
+    default: '', // Default to an empty string if no comments are provided
   },
 }, {
   timestamps: true,
