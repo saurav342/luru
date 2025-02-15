@@ -53,6 +53,33 @@ const updateBookingById = async (bookingId, updateBody) => {
   if (!booking) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Booking not found');
   }
+
+  const { status } = updateBody;
+
+  // Validate status transition
+  if (status) {
+    const currentStatus = booking.status;
+
+    // Check if the new status is the same as the current status
+    if (currentStatus === status) {
+      throw new ApiError(httpStatus.BAD_REQUEST, `The status is already set to ${currentStatus}. No update is needed.`);
+    }
+
+    // Validate status transitions
+    if (currentStatus === 'pending') {
+      if (status !== 'confirmed' && status !== 'rejected') {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid status transition from pending. Must be confirmed or rejected.');
+      }
+    } else if (currentStatus === 'confirmed' || currentStatus === 'rejected') {
+      if (status !== 'completed' && status !== 'cancelled' && status !== 'scheduled') {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid status transition from confirmed/rejected. Must be completed, cancelled, or scheduled.');
+      }
+    } else if (currentStatus === 'completed' || currentStatus === 'cancelled' || currentStatus === 'scheduled') {
+      // Prevent transitioning from completed, cancelled, or scheduled to any other status
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot change status from completed, cancelled, or scheduled to another status.');
+    }
+  }
+
   Object.assign(booking, updateBody);
   await booking.save();
   return booking;
