@@ -73,6 +73,10 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     default: '', // Default to an empty string if no comments are provided
   },
+  isReturnJourney: {
+    type: Boolean,
+    default: false, // Default to false if not specified
+  },
 }, {
   timestamps: true,
   _id: true  // This is default behavior, MongoDB will auto-generate _id
