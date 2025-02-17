@@ -40,7 +40,7 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'completed', 'cancelled', 'scheduled', 'rejected'],
     default: 'pending'
   },
-  googleMapLink: {
+  placesId: {
     type: String,
     default: '',
   },
