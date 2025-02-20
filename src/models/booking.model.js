@@ -81,6 +81,10 @@ const bookingSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // Default to false if not specified
   },
+  isAirportPickup: {
+    type: Boolean,
+    default: false, // Default to false if not specified
+  },
 }, {
   timestamps: true,
   _id: true  // This is default behavior, MongoDB will auto-generate _id
