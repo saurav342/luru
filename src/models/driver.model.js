@@ -9,6 +9,7 @@ const driverSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+
   },
   weeklyOff: {
     type: String,
@@ -29,7 +30,6 @@ const driverSchema = new mongoose.Schema({
   },
   vehicleNumber: {
     type: String,
-    unique: true,
     required: true
   }
 }, {
@@ -60,9 +60,9 @@ const driverSchema = new mongoose.Schema({
 //   return bcrypt.compare(password, driver.password);
 // };
 
-// add plugins
-driverSchema.plugin(toJSON);
-driverSchema.plugin(paginate);
+// // add plugins
+// driverSchema.plugin(toJSON);
+// driverSchema.plugin(paginate);
 
 // Create a 2dsphere index for location-based queries
 driverSchema.index({ currentLocation: '2dsphere' });
