@@ -2,61 +2,49 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
-const driverSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    licenseNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    isAvailable: {
-      type: Boolean,
-      default: true,
-    },
-    currentLocation: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point',
-      },
-      coordinates: {
-        type: [Number],
-        default: [0, 0],
-      },
-    },
-    rating: {
-      type: Number,
-      default: 0,
-    },
-    totalRides: {
-      type: Number,
-      default: 0,
-    },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    driverIdentity: {
-      type: String,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 8,
-      private: true, // used by the toJSON plugin
-    },
+const driverSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    unique: true,
+    required: true
   },
-  {
-    timestamps: true,
+  name: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
+    required: true
+  },
+  weeklyOff: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    required: true
+  },
+  slotStartTime: {
+    type: String,
+    required: true
+  },
+  slotEndTime: {
+    type: String,
+    required: true
+  },
+  overtimeAvailability: {
+    type: Boolean,
+    default: false
+  },
+  vehicleNumber: {
+    type: String,
+    unique: true,
+    required: true
   }
-);
+}, {
+  timestamps: true
+});
 
 // Pre-save hook to generate driverIdentity
 // Incremental logic for driverIdentity

@@ -1,28 +1,94 @@
 const express = require('express');
-const auth = require('../../middlewares/auth');
-const validate = require('../../middlewares/validate');
-// const driverValidation = require('../../validations/driver.validation');
-const driverController = require('../../controllers/driver.controller');
-
 const router = express.Router();
+const Driver = require('../../models/driver.model');
+const Joi = require('joi');
 
-router
-  .route('/')
-  .post( driverController.createDriver)
-  .get(driverController.getDrivers);
+// Validation schema
+const driverSchema = Joi.object({
+  id: Joi.string().required(),
+  name: Joi.string().required(),
+  phone: Joi.string().required(),
+  weeklyOff: Joi.string().required(),
+  status: Joi.string().valid('active', 'inactive').required(),
+  slotStartTime: Joi.string().pattern(/^\d{2}:\d{2}$/).required(),
+  slotEndTime: Joi.string().pattern(/^\d{2}:\d{2}$/).required(),
+  overtimeAvailability: Joi.boolean(),
+  vehicleNumber: Joi.string().required()
+});
 
-// router
-//   .route('/:driverId')
-//   .get(auth('getDrivers'), validate(driverValidation.getDriver), driverController.getDriver)
-//   .put(auth('manageDrivers'), validate(driverValidation.updateDriver), driverController.updateDriver)
-//   .delete(auth('manageDrivers'), validate(driverValidation.deleteDriver), driverController.deleteDriver);
+// Create a Driver
+router.post('/', async (req, res) => {
+  const { error } = driverSchema.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-// router
-//   .route('/user/:userId')
-//   .get(auth('getDrivers'), validate(driverValidation.getDriverByUserId), driverController.getDriverByUserId);
+  const driver = new Driver(req.body);
+  try {
+    await driver.save();
+    res.status(201).send(driver);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
-// Keep your existing routes
-// router.get('/getAssignedDriverRide', driverController.getAssignedDriverRide);
-// router.put('/updateRide', driverController.updateRide);
+// Get All Drivers with Pagination and Search
+router.get('/', async (req, res) => {
+  const { page = 1, limit = 10, search = '' } = req.query;
+  const query = {
+    $or: [
+      { name: { $regex: search, $options: 'i' } },
+      { phone: { $regex: search, $options: 'i' } }
+    ]
+  };
 
-module.exports = router;
+  try {
+    const drivers = await Driver.find(query)
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    const count = await Driver.countDocuments(query);
+    res.json({
+      drivers,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Get a Single Driver by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const driver = await Driver.findOne({ id: req.params.id });
+    if (!driver) return res.status(404).send('Driver not found');
+    res.send(driver);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Update a Driver
+router.put('/:id', async (req, res) => {
+  const { error } = driverSchema.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const driver = await Driver.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
+    if (!driver) return res.status(404).send('Driver not found');
+    res.send(driver);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// Delete a Driver
+router.delete('/:id', async (req, res) => {
+  try {
+    const driver = await Driver.findOneAndDelete({ id: req.params.id });
+    if (!driver) return res.status(404).send('Driver not found');
+    res.send(driver);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+module.exports = router; 
