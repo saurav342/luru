@@ -3,10 +3,6 @@ const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
 const driverSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    unique: true,
-  },
   name: {
     type: String,
     required: true
@@ -37,7 +33,8 @@ const driverSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  _id: true
 });
 
 // // Pre-save hook to generate driverIdentity
