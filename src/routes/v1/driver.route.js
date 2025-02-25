@@ -5,7 +5,6 @@ const Joi = require('joi');
 
 // Validation schema
 const driverSchema = Joi.object({
-  id: Joi.string().optional(),
   name: Joi.string().required(),
   phone: Joi.string().required(),
   weeklyOff: Joi.string().optional(),
