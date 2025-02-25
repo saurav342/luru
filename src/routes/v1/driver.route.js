@@ -5,14 +5,14 @@ const Joi = require('joi');
 
 // Validation schema
 const driverSchema = Joi.object({
-  id: Joi.string().required(),
+  id: Joi.string().optional(),
   name: Joi.string().required(),
   phone: Joi.string().required(),
-  weeklyOff: Joi.string().required(),
-  status: Joi.string().valid('active', 'inactive').required(),
-  slotStartTime: Joi.string().pattern(/^\d{2}:\d{2}$/).required(),
-  slotEndTime: Joi.string().pattern(/^\d{2}:\d{2}$/).required(),
-  overtimeAvailability: Joi.boolean(),
+  weeklyOff: Joi.string().optional(),
+  status: Joi.string().valid('active', 'inactive').optional(),
+  slotStartTime: Joi.string().pattern(/^\d{2}:\d{2}$/).optional(),
+  slotEndTime: Joi.string().pattern(/^\d{2}:\d{2}$/).optional(),
+  overtimeAvailability: Joi.boolean().optional(),
   vehicleNumber: Joi.string().required()
 });
 

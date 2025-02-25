@@ -14,24 +14,19 @@ const driverSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: true
   },
   weeklyOff: {
     type: String,
-    required: true
   },
   status: {
     type: String,
     enum: ['active', 'inactive'],
-    required: true
   },
   slotStartTime: {
     type: String,
-    required: true
   },
   slotEndTime: {
     type: String,
-    required: true
   },
   overtimeAvailability: {
     type: Boolean,
