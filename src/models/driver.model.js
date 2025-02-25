@@ -40,28 +40,28 @@ const driverSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Pre-save hook to generate driverIdentity
-// Incremental logic for driverIdentity
-let counter = 1; // This should ideally be stored in a persistent way, such as in a database or a separate collection
+// // Pre-save hook to generate driverIdentity
+// // Incremental logic for driverIdentity
+// let counter = 1; // This should ideally be stored in a persistent way, such as in a database or a separate collection
 
-driverSchema.pre('save', async function (next) {
-  const driver = this;
-  if (!driver.driverIdentity) {
-    driver.driverIdentity = `B${String(counter).padStart(1, '0')}`;
-    counter += 1; // Increment the counter for the next driver
-  }
-  if (driver.isModified('password')) {
-    driver.password = await bcrypt.hash(driver.password, 8);
-  }
-  next();
-});
+// driverSchema.pre('save', async function (next) {
+//   const driver = this;
+//   if (!driver.driverIdentity) {
+//     driver.driverIdentity = `B${String(counter).padStart(1, '0')}`;
+//     counter += 1; // Increment the counter for the next driver
+//   }
+//   if (driver.isModified('password')) {
+//     driver.password = await bcrypt.hash(driver.password, 8);
+//   }
+//   next();
+// });
 
-// Middleware to hash password before saving
-// Check if password matches the driver's password
-driverSchema.methods.isPasswordMatch = async function (password) {
-  const driver = this;
-  return bcrypt.compare(password, driver.password);
-};
+// // Middleware to hash password before saving
+// // Check if password matches the driver's password
+// driverSchema.methods.isPasswordMatch = async function (password) {
+//   const driver = this;
+//   return bcrypt.compare(password, driver.password);
+// };
 
 // add plugins
 driverSchema.plugin(toJSON);
