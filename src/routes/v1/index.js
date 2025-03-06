@@ -9,6 +9,7 @@ const driverRoute = require('./driver.route');
 const carAssignmentRoute = require('./carAssignment.route');
 const config = require('../../config/config');
 const gupshupRoutes = require('./gupshup.route');
+const driverEarningsRoute = require('./driverEarnings.route');
 
 const router = express.Router();
 
@@ -44,6 +45,10 @@ const defaultRoutes = [
   {
     path: '/gupshup',
     route: gupshupRoutes,
+  },
+  {
+    path: '/driver-earnings',
+    route: driverEarningsRoute,
   },
 ];
 
