@@ -55,21 +55,24 @@ const getBookings1 = async (filter, options) => {
 };
 
 const getBookings = async (filter, options) => {
+  console.log("Before Processing:", filter);
+
   if (filter.from) {
     filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$gte = new Date(filter.from);
+    filter.dateTime.$gte = new Date(`${filter.from}T00:00:00.000Z`);
     delete filter.from;
   }
   if (filter.to) {
     filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$lte = new Date(new Date(filter.to).setHours(23, 59, 59, 999)); // Include full day
+    filter.dateTime.$lte = new Date(`${filter.to}T23:59:59.999Z`);
     delete filter.to;
   }
+
+  console.log("Final Filter:", JSON.stringify(filter, null, 2));
 
   const bookings = await Booking.paginate(filter, options);
   return bookings;
 };
-
 /**
  * Update booking by id
  * @param {ObjectId} bookingId
