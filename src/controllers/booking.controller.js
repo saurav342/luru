@@ -60,15 +60,15 @@ const getBookings = async (filter, options) => {
 
   if (filter.from) {
     // Use moment to parse and format the 'from' date
-    filter.dateTime = filter.dateTime || {};
+    filter.dateTime = filter.dateTime || {}; // Ensure dateTime is initialized
     filter.dateTime.$gte = moment(filter.from).startOf('day').toISOString(); // Start of the day
-    delete filter.from;
+    delete filter.from; // Remove from filter to avoid passing it to the query
   }
   if (filter.to) {
     // Use moment to parse and format the 'to' date
-    filter.dateTime = filter.dateTime || {};
+    filter.dateTime = filter.dateTime || {}; // Ensure dateTime is initialized
     filter.dateTime.$lte = moment(filter.to).endOf('day').toISOString(); // End of the day
-    delete filter.to;
+    delete filter.to; // Remove to filter to avoid passing it to the query
   }
 
   console.log("Final Filter:", JSON.stringify(filter, null, 2));
