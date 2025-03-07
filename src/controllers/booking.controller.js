@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { Booking } = require('../models');
 const ApiError = require('../utils/ApiError');
 const RideIdCounter = require('../models/rideIdCounter.model');
+const moment = require('moment');
 
 /**
  * Create a booking
@@ -58,13 +59,15 @@ const getBookings = async (filter, options) => {
   console.log("Before Processing:", filter);
 
   if (filter.from) {
+    // Use moment to parse and format the 'from' date
     filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$gte = new Date(`${filter.from}T00:00:00.000Z`);
+    filter.dateTime.$gte = moment(filter.from).startOf('day').toISOString(); // Start of the day
     delete filter.from;
   }
   if (filter.to) {
+    // Use moment to parse and format the 'to' date
     filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$lte = new Date(`${filter.to}T23:59:59.999Z`);
+    filter.dateTime.$lte = moment(filter.to).endOf('day').toISOString(); // End of the day
     delete filter.to;
   }
 
@@ -73,6 +76,7 @@ const getBookings = async (filter, options) => {
   const bookings = await Booking.paginate(filter, options);
   return bookings;
 };
+
 /**
  * Update booking by id
  * @param {ObjectId} bookingId
