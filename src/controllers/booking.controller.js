@@ -58,15 +58,17 @@ const getBookings1 = async (filter, options) => {
 const getBookings = async (filter, options) => {
   console.log("Before Processing:", filter);
 
-  if (filter.from) {
-    filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$gte = new Date(`${filter.from}T00:00:00.000Z`).toISOString(); // Convert to string format
-    delete filter.from;
-  }
-  if (filter.to) {
-    filter.dateTime = filter.dateTime || {};
-    filter.dateTime.$lte = new Date(`${filter.to}T23:59:59.999Z`).toISOString(); // Convert to string format
-    delete filter.to;
+  // Convert the `date` filter to `dateTime` (as per your schema)
+  if (filter.date) {
+    if (filter.date.$gte) {
+      filter.dateTime = filter.dateTime || {};
+      filter.dateTime.$gte = new Date(filter.date.$gte).toISOString(); // Convert to ISO string
+    }
+    if (filter.date.$lte) {
+      filter.dateTime = filter.dateTime || {};
+      filter.dateTime.$lte = new Date(filter.date.$lte).toISOString(); // Convert to ISO string
+    }
+    delete filter.date; // Remove the `date` field as it's not part of the schema
   }
 
   console.log("Final Filter:", JSON.stringify(filter, null, 2));
