@@ -13,13 +13,22 @@ router
   })
   .get(async (req, res, next) => {
     try {
-      const { page, limit, sortBy, populate, ...filter } = req.query;
+      const { page, limit, sortBy, populate, from, to, ...filter } = req.query;
       const options = {
         page: page ? parseInt(page, 10) : 1,
         limit: limit ? parseInt(limit, 10) : 25,
         sortBy,
         populate
       };
+
+      // Add date filters to the filter object
+      if (from) {
+        filter.date = { ...filter.date, $gte: new Date(from) }; // Assuming 'date' is the field name in your bookings
+      }
+      if (to) {
+        filter.date = { ...filter.date, $lte: new Date(to) }; // Assuming 'date' is the field name in your bookings
+      }
+
       const bookings = await bookingController.getBookings(filter, options);
       res.send(bookings);
     } catch (error) {
