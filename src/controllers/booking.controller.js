@@ -59,16 +59,14 @@ const getBookings = async (filter, options) => {
   console.log("Before Processing:", filter);
 
   if (filter.from) {
-    // Use moment to parse and format the 'from' date
-    filter.dateTime = filter.dateTime || {}; // Ensure dateTime is initialized
-    filter.dateTime.$gte = moment(filter.from).startOf('day').toISOString(); // Start of the day
-    delete filter.from; // Remove from filter to avoid passing it to the query
+    filter.dateTime = filter.dateTime || {};
+    filter.dateTime.$gte = new Date(`${filter.from}T00:00:00.000Z`).toISOString(); // Convert to string format
+    delete filter.from;
   }
   if (filter.to) {
-    // Use moment to parse and format the 'to' date
-    filter.dateTime = filter.dateTime || {}; // Ensure dateTime is initialized
-    filter.dateTime.$lte = moment(filter.to).endOf('day').toISOString(); // End of the day
-    delete filter.to; // Remove to filter to avoid passing it to the query
+    filter.dateTime = filter.dateTime || {};
+    filter.dateTime.$lte = new Date(`${filter.to}T23:59:59.999Z`).toISOString(); // Convert to string format
+    delete filter.to;
   }
 
   console.log("Final Filter:", JSON.stringify(filter, null, 2));
