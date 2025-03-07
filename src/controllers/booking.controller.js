@@ -39,7 +39,33 @@ const getBookingById = async (id) => {
  * @param {Object} options - Query options
  * @returns {Promise<QueryResult>}
  */
+const getBookings1 = async (filter, options) => {
+  // Check for from and to date filters in the filter object
+  if (filter.from) {
+    filter.dateTime = { ...filter.dateTime, $gte: new Date(filter.from) }; // Filter for dates greater than or equal to 'from'
+    delete filter.from; // Remove from filter to avoid passing it to the query
+  }
+  if (filter.to) {
+    filter.dateTime = { ...filter.dateTime, $lte: new Date(filter.to) }; // Filter for dates less than or equal to 'to'
+    delete filter.to; // Remove to filter to avoid passing it to the query
+  }
+
+  const bookings = await Booking.paginate(filter, options);
+  return bookings;
+};
+
 const getBookings = async (filter, options) => {
+  if (filter.from) {
+    filter.dateTime = filter.dateTime || {};
+    filter.dateTime.$gte = new Date(filter.from);
+    delete filter.from;
+  }
+  if (filter.to) {
+    filter.dateTime = filter.dateTime || {};
+    filter.dateTime.$lte = new Date(new Date(filter.to).setHours(23, 59, 59, 999)); // Include full day
+    delete filter.to;
+  }
+
   const bookings = await Booking.paginate(filter, options);
   return bookings;
 };
