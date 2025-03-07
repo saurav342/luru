@@ -13,7 +13,14 @@ router
   })
   .get(async (req, res, next) => {
     try {
-      const bookings = await bookingController.getBookings(req.query);
+      const { page, limit, sortBy, populate, ...filter } = req.query;
+      const options = {
+        page: page ? parseInt(page, 10) : 1,
+        limit: limit ? parseInt(limit, 10) : 25,
+        sortBy,
+        populate
+      };
+      const bookings = await bookingController.getBookings(filter, options);
       res.send(bookings);
     } catch (error) {
       next(error);

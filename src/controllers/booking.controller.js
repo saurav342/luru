@@ -34,12 +34,14 @@ const getBookingById = async (id) => {
 };
 
 /**
- * Get all bookings
- * @param {Object} filter
- * @returns {Promise<Booking[]>}
+ * Get all bookings with pagination
+ * @param {Object} filter - Filter options
+ * @param {Object} options - Query options
+ * @returns {Promise<QueryResult>}
  */
-const getBookings = async (filter) => {
-  return Booking.find(filter);
+const getBookings = async (filter, options) => {
+  const bookings = await Booking.paginate(filter, options);
+  return bookings;
 };
 
 /**

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const paginate = require('./plugins/paginate.plugin');
 
 const bookingSchema = new mongoose.Schema({
   name: {
@@ -90,6 +91,7 @@ const bookingSchema = new mongoose.Schema({
   _id: true  // This is default behavior, MongoDB will auto-generate _id
 });
 
+bookingSchema.plugin(paginate);
 bookingSchema.set('autoIndex', false);
 
 module.exports = mongoose.model('Booking', bookingSchema); 
