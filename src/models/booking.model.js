@@ -96,6 +96,11 @@ const bookingSchema = new mongoose.Schema({
     enum: ['success', 'fail', 'pending'],
     default: 'pending'
   },
+  source: {
+    type: String,
+    enum: ['go', 'app', 'telegram'],
+    default: 'go'
+  }
 }, {
   timestamps: true,
   _id: true  // This is default behavior, MongoDB will auto-generate _id
