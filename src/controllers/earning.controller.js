@@ -6,39 +6,108 @@ const Booking = require('../models/booking.model');
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
+
 const getEarnings = async (req, res) => {
   try {
-    const { startDate, endDate, groupBy = 'driver' } = req.query;
+    // Support both parameter naming conventions
+    const { 
+      startDate, endDate,  // Original parameter names
+      fromDate, toDate,    // New parameter names from URL
+      groupBy = 'driver', 
+      status = 'completed' 
+    } = req.query;
+
+    // Use new parameter names if provided, fallback to original names
+    let effectiveStartDate = fromDate || startDate;
+    let effectiveEndDate = toDate || endDate;
+
+    // Validate dates - create proper Date objects and check if they're valid
+    let startDateObj = null;
+    let endDateObj = null;
     
-    // Build date filter
-    const dateFilter = {};
-    if (startDate) {
-      dateFilter.createdAt = { $gte: new Date(startDate) };
+    if (effectiveStartDate) {
+      startDateObj = new Date(effectiveStartDate);
+      // Check if date is valid
+      if (isNaN(startDateObj.getTime())) {
+        console.warn(`Invalid start date provided: ${effectiveStartDate}`);
+        effectiveStartDate = null;
+        startDateObj = null;
+      }
     }
-    if (endDate) {
-      dateFilter.createdAt = { ...dateFilter.createdAt, $lte: new Date(endDate) };
+    
+    if (effectiveEndDate) {
+      endDateObj = new Date(effectiveEndDate);
+      // Check if date is valid
+      if (isNaN(endDateObj.getTime())) {
+        console.warn(`Invalid end date provided: ${effectiveEndDate}`);
+        effectiveEndDate = null;
+        endDateObj = null;
+      }
     }
 
-    // Only include completed bookings with a valid driver and actualCost
-    const baseFilter = {
-      ...dateFilter,
-      status: 'completed',
-      driverName: { $ne: '' },
-      actualCost: { $gt: 0 }
+    // Log the actual parameters being used
+    console.log(`Using date range: ${effectiveStartDate} to ${effectiveEndDate}`);
+
+    // Build base filter with date filtering
+    const baseFilter = {};
+    
+    // Add status filter if specified
+    if (status) {
+      baseFilter.status = status;
+    }
+    
+    // Add date filtering to the base filter - now that all dates are in a consistent format
+    if (startDateObj || endDateObj) {
+      baseFilter.dateTime = {};
+      
+      if (startDateObj) {
+        // Convert to ISO string for proper comparison
+        baseFilter.dateTime.$gte = startDateObj.toISOString();
+      }
+      
+      if (endDateObj) {
+        // Convert to ISO string for proper comparison
+        baseFilter.dateTime.$lte = endDateObj.toISOString();
+      }
+    }
+
+    // Create pipeline starting with the base filter
+    const pipeline = [
+      // Initial match to filter documents
+      { $match: baseFilter },
+      
+      // Simply parse dateTime directly since it's now in a consistent format
+      {
+        $addFields: {
+          parsedDateTime: { $dateFromString: { dateString: "$dateTime", onError: "$dateTime" } }
+        }
+      }
+    ];
+    
+    // For calculating earnings, consider both tripCost and actualCost
+    // Simplified to handle numeric values consistently
+    const costField = {
+      $cond: {
+        if: { $gt: [{ $ifNull: ["$actualCost", 0] }, 0] },
+        then: { $ifNull: ["$actualCost", 0] },
+        else: { $ifNull: ["$tripCost", 0] }
+      }
     };
 
     let aggregation;
     let earnings = [];
     let totalEarnings = 0;
 
+    // Additional pipeline stages based on groupBy
+    let groupPipeline = [];
+    
     switch (groupBy) {
       case 'day':
-        aggregation = await Booking.aggregate([
-          { $match: baseFilter },
+        groupPipeline = [
           {
             $group: {
-              _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-              totalEarnings: { $sum: '$actualCost' },
+              _id: { $dateToString: { format: '%Y-%m-%d', date: '$parsedDateTime' } },
+              totalEarnings: { $sum: costField },
               totalTrips: { $sum: 1 }
             }
           },
@@ -51,22 +120,20 @@ const getEarnings = async (req, res) => {
               totalTrips: 1
             }
           }
-        ]);
-        earnings = aggregation;
+        ];
         break;
 
       case 'week':
-        aggregation = await Booking.aggregate([
-          { $match: baseFilter },
+        groupPipeline = [
           {
             $group: {
-              _id: { 
-                year: { $year: '$createdAt' },
-                week: { $week: '$createdAt' }
+              _id: {
+                year: { $year: '$parsedDateTime' },
+                week: { $week: '$parsedDateTime' }
               },
-              totalEarnings: { $sum: '$actualCost' },
+              totalEarnings: { $sum: costField },
               totalTrips: { $sum: 1 },
-              firstDay: { $min: '$createdAt' }
+              firstDay: { $min: '$parsedDateTime' }
             }
           },
           { $sort: { '_id.year': 1, '_id.week': 1 } },
@@ -85,20 +152,18 @@ const getEarnings = async (req, res) => {
               totalTrips: 1
             }
           }
-        ]);
-        earnings = aggregation;
+        ];
         break;
 
       case 'month':
-        aggregation = await Booking.aggregate([
-          { $match: baseFilter },
+        groupPipeline = [
           {
             $group: {
-              _id: { 
-                year: { $year: '$createdAt' },
-                month: { $month: '$createdAt' }
+              _id: {
+                year: { $year: '$parsedDateTime' },
+                month: { $month: '$parsedDateTime' }
               },
-              totalEarnings: { $sum: '$actualCost' },
+              totalEarnings: { $sum: costField },
               totalTrips: { $sum: 1 }
             }
           },
@@ -108,23 +173,25 @@ const getEarnings = async (req, res) => {
               _id: 0,
               period: {
                 $concat: [
-                  { $switch: {
-                    branches: [
-                      { case: { $eq: ['$_id.month', 1] }, then: 'January' },
-                      { case: { $eq: ['$_id.month', 2] }, then: 'February' },
-                      { case: { $eq: ['$_id.month', 3] }, then: 'March' },
-                      { case: { $eq: ['$_id.month', 4] }, then: 'April' },
-                      { case: { $eq: ['$_id.month', 5] }, then: 'May' },
-                      { case: { $eq: ['$_id.month', 6] }, then: 'June' },
-                      { case: { $eq: ['$_id.month', 7] }, then: 'July' },
-                      { case: { $eq: ['$_id.month', 8] }, then: 'August' },
-                      { case: { $eq: ['$_id.month', 9] }, then: 'September' },
-                      { case: { $eq: ['$_id.month', 10] }, then: 'October' },
-                      { case: { $eq: ['$_id.month', 11] }, then: 'November' },
-                      { case: { $eq: ['$_id.month', 12] }, then: 'December' }
-                    ],
-                    default: 'Unknown'
-                  }},
+                  {
+                    $switch: {
+                      branches: [
+                        { case: { $eq: ['$_id.month', 1] }, then: 'January' },
+                        { case: { $eq: ['$_id.month', 2] }, then: 'February' },
+                        { case: { $eq: ['$_id.month', 3] }, then: 'March' },
+                        { case: { $eq: ['$_id.month', 4] }, then: 'April' },
+                        { case: { $eq: ['$_id.month', 5] }, then: 'May' },
+                        { case: { $eq: ['$_id.month', 6] }, then: 'June' },
+                        { case: { $eq: ['$_id.month', 7] }, then: 'July' },
+                        { case: { $eq: ['$_id.month', 8] }, then: 'August' },
+                        { case: { $eq: ['$_id.month', 9] }, then: 'September' },
+                        { case: { $eq: ['$_id.month', 10] }, then: 'October' },
+                        { case: { $eq: ['$_id.month', 11] }, then: 'November' },
+                        { case: { $eq: ['$_id.month', 12] }, then: 'December' }
+                      ],
+                      default: 'Unknown'
+                    }
+                  },
                   ' ',
                   { $toString: '$_id.year' }
                 ]
@@ -133,18 +200,22 @@ const getEarnings = async (req, res) => {
               totalTrips: 1
             }
           }
-        ]);
-        earnings = aggregation;
+        ];
         break;
 
       case 'driver':
       default:
-        aggregation = await Booking.aggregate([
-          { $match: baseFilter },
+        groupPipeline = [
           {
             $group: {
-              _id: '$driverName',
-              totalEarnings: { $sum: '$actualCost' },
+              _id: { 
+                $cond: { 
+                  if: { $eq: ["$driverName", ""] }, 
+                  then: "Unassigned", 
+                  else: "$driverName" 
+                }
+              },
+              totalEarnings: { $sum: costField },
               totalTrips: { $sum: 1 }
             }
           },
@@ -157,19 +228,38 @@ const getEarnings = async (req, res) => {
               totalTrips: 1
             }
           }
-        ]);
-        earnings = aggregation;
+        ];
         break;
     }
+    
+    // Combine base pipeline with group-specific pipeline
+    const fullPipeline = [...pipeline, ...groupPipeline];
+    
+    // Print full pipeline for debugging
+    console.log('Aggregation pipeline:', JSON.stringify(fullPipeline, null, 2));
+    
+    // Execute the aggregation
+    aggregation = await Booking.aggregate(fullPipeline);
+    earnings = aggregation;
 
     // Calculate total earnings
-    totalEarnings = earnings.reduce((sum, item) => sum + item.totalEarnings, 0);
+    totalEarnings = earnings.reduce((sum, item) => sum + (item.totalEarnings || 0), 0);
 
-    res.status(200).json({
+    // Add debugging info in development
+    const response = {
       earnings,
       totalEarnings,
-      count: earnings.length
-    });
+      count: earnings.length,
+      dateFilter: {
+        fromDate: effectiveStartDate ? effectiveStartDate : null,
+        toDate: effectiveEndDate ? effectiveEndDate : null
+      }
+    };
+
+    // Log query parameters for debugging
+    console.log(`Query params: fromDate=${effectiveStartDate}, toDate=${effectiveEndDate}, groupBy=${groupBy}, status=${status}`);
+    
+    res.status(200).json(response);
   } catch (error) {
     console.error('Error getting earnings:', error);
     res.status(500).json({ message: 'Error retrieving earnings', error: error.message });
@@ -178,4 +268,4 @@ const getEarnings = async (req, res) => {
 
 module.exports = {
   getEarnings
-}; 
+};
