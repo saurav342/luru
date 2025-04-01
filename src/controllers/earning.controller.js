@@ -123,6 +123,37 @@ const getEarnings = async (req, res) => {
         ];
         break;
 
+      case 'driverDatewise':
+        groupPipeline = [
+          {
+            $group: {
+              _id: { 
+                driverName: { 
+                  $cond: { 
+                    if: { $eq: ["$driverName", ""] }, 
+                    then: "Unassigned", 
+                    else: "$driverName" 
+                  }
+                },
+                date: { $dateToString: { format: '%Y-%m-%d', date: '$parsedDateTime' } }
+              },
+              totalEarnings: { $sum: costField },
+              totalTrips: { $sum: 1 }
+            }
+          },
+          { $sort: { '_id.driverName': 1, '_id.date': 1 } },
+          {
+            $project: {
+              _id: 0,
+              driverName: '$_id.driverName',
+              date: '$_id.date',
+              totalEarnings: 1,
+              totalTrips: 1
+            }
+          }
+        ];
+        break;
+
       case 'week':
         groupPipeline = [
           {
