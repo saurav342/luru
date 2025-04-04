@@ -59,8 +59,8 @@ const getBookingsByMobileNumber = async (mobileNumber, options) => {
   
   // Return modified result with simplified docs
   return {
-    ...result,
-    docs: simplifiedDocs
+    
+    result: simplifiedDocs
   };
 };
 
