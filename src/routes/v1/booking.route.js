@@ -74,7 +74,6 @@ router.get('/mobile/:mobileNumber', async (req, res, next) => {
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 25,
       sortBy
-      // select is set in controller
     };
     
     const bookings = await bookingController.getBookingsByMobileNumber(req.params.mobileNumber, options);
@@ -82,6 +81,7 @@ router.get('/mobile/:mobileNumber', async (req, res, next) => {
       throw new ApiError(httpStatus.NOT_FOUND, 'No bookings found for this mobile number');
     }
     
+    // Send response with only the necessary data
     res.send(bookings);
   } catch (error) {
     next(error);
