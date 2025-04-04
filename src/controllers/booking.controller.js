@@ -35,6 +35,18 @@ const getBookingById = async (id) => {
 };
 
 /**
+ * Get bookings by mobile number
+ * @param {String} mobileNumber
+ * @param {Object} options - Query options
+ * @returns {Promise<Booking[]>}
+ */
+const getBookingsByMobileNumber = async (mobileNumber, options) => {
+  const filter = { mobileNumber };
+  const bookings = await Booking.paginate(filter, options);
+  return bookings;
+};
+
+/**
  * Get all bookings with pagination
  * @param {Object} filter - Filter options
  * @param {Object} options - Query options
@@ -152,4 +164,5 @@ module.exports = {
   getBookingById,
   updateBookingById,
   deleteBookingById,
+  getBookingsByMobileNumber,
 }; 
