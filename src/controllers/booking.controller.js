@@ -49,7 +49,7 @@ const getBookingsByMobileNumber = async (mobileNumber, options) => {
   const result = await Booking.paginate(filter, options);
   
   // Transform docs to ensure only requested fields are returned
-  const simplifiedDocs = result.docs.map(doc => ({
+  const simplifiedDocs = result.results.map(doc => ({
     name: doc.name,
     mobile: doc.mobile,
     dateTime: doc.dateTime
