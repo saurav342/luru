@@ -77,7 +77,7 @@ router.get('/mobile/:mobileNumber', async (req, res, next) => {
     };
     
     const bookings = await bookingController.getBookingsByMobileNumber(req.params.mobileNumber, options);
-    if (!bookings.totalResults) {
+    if (bookings.result.length > 0) {
       throw new ApiError(httpStatus.NOT_FOUND, 'No bookings found for this mobile number');
     }
     
