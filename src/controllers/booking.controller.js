@@ -41,7 +41,7 @@ const getBookingById = async (id) => {
  * @returns {Promise<Booking[]>}
  */
 const getBookingsByMobileNumber = async (mobileNumber, options) => {
-  const filter = { mobileNumber };
+  const filter = { mobile: mobileNumber };
   const bookings = await Booking.paginate(filter, options);
   return bookings;
 };
