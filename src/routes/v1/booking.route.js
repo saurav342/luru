@@ -69,18 +69,19 @@ router
 // New route to get bookings by mobile number
 router.get('/mobile/:mobileNumber', async (req, res, next) => {
   try {
-    const { page, limit, sortBy, populate } = req.query;
+    const { page, limit, sortBy } = req.query;
     const options = {
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 25,
-      sortBy,
-      populate
+      sortBy
+      // select is set in controller
     };
     
     const bookings = await bookingController.getBookingsByMobileNumber(req.params.mobileNumber, options);
     if (!bookings.totalResults) {
       throw new ApiError(httpStatus.NOT_FOUND, 'No bookings found for this mobile number');
     }
+    
     res.send(bookings);
   } catch (error) {
     next(error);

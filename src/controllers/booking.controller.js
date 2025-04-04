@@ -42,6 +42,10 @@ const getBookingById = async (id) => {
  */
 const getBookingsByMobileNumber = async (mobileNumber, options) => {
   const filter = { mobile: mobileNumber };
+  
+  // Ensure only name, mobile, and dateTime fields are returned
+  options.select = 'name mobile dateTime';
+  
   const bookings = await Booking.paginate(filter, options);
   return bookings;
 };
